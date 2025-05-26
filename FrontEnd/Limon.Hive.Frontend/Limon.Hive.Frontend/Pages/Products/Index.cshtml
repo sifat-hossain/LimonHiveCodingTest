@@ -1,0 +1,107 @@
+﻿@page
+@model ProductModel
+@{
+    ViewData["Title"] = "E-Bazaar";
+}
+
+<div class="container my-5">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><span class="text-primary">E-</span>Bazaar</h2>
+        <div>
+            <a href="/Cart" class="btn btn-outline-primary position-relative">
+                Cart <span class="badge bg-danger">@Model.CartCount</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="row text-center mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5>Total Product: 100</h5>
+                    <p>Max Capacity: 200</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5>Total Vendor: 6</h5>
+                    <p>8 of 10 active</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5>Unique Product: 40</h5>
+                    <p>No duplicates or redundant items</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Add Product -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <input type="text" class="form-control w-50" placeholder="Search by name" />
+        <a href="/Products/Add" class="btn btn-outline-primary ms-3">Add Product</a>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="row">
+        @foreach (var product in Model.Products)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="card h-100">
+                    <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name" />
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="card-title">@product.Name</h6>
+                        <p class="card-text">
+                            <strong>$@product.Price</strong>
+                            @if (product.OriginalPrice > product.Price)
+                            {
+                                <span class="text-muted text-decoration-line-through ms-2">$@product.OriginalPrice</span>
+                            }
+                        </p>
+                        @if (product.Quantity > 0)
+                        {
+                            <div class="mt-auto">
+                                <div class="input-group mb-2">
+                                    <button class="btn btn-outline-secondary">-</button>
+                                    <input type="text" class="form-control text-center" value="@product.Quantity" readonly />
+                                    <button class="btn btn-outline-secondary">+</button>
+                                </div>
+                                <button class="btn btn-primary w-100">Add to cart</button>
+                            </div>
+                        }
+                        else
+                        {
+                            <button class="btn btn-outline-secondary w-100 mt-auto">Add to cart</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <nav>
+            <ul class="pagination">
+                <li class="page-item disabled"><a class="page-link">Prev</a></li>
+                <li class="page-item"><a class="page-link">1</a></li>
+                <li class="page-item"><a class="page-link">2</a></li>
+                <li class="page-item active"><a class="page-link">3</a></li>
+                <li class="page-item"><a class="page-link">4</a></li>
+                <li class="page-item"><a class="page-link">5</a></li>
+                <li class="page-item"><a class="page-link">Next</a></li>
+            </ul>
+        </nav>
+        <select class="form-select w-auto">
+            <option selected>10 per page</option>
+            <option>20 per page</option>
+        </select>
+    </div>
+</div>

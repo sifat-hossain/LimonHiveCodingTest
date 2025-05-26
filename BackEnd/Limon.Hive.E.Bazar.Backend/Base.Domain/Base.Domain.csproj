@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+	<LangVersion>10.0</LangVersion>
+	<UserSecretsId>6f19fc58-9416-43ef-b8fd-1fc1cf147ff1</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NetTopologySuite" Version="2.4.0" />
+  </ItemGroup>
+
+</Project>
