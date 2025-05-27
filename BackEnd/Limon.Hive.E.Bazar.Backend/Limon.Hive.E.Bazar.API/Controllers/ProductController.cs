@@ -1,5 +1,6 @@
 ﻿using Limon.Hive.E.Bazar.Application.Actions.Products;
 using Limon.Hive.E.Bazar.Application.Actions.Products.Command;
+using Limon.Hive.E.Bazar.Application.Actions.Products.Query;
 using Limon.Hive.E.Bazar.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -18,5 +19,11 @@ public class ProductController(IMediator mediator) : Controller
     public async Task<LimonHiveActionResponse<ProductModel>> Insert(ProductCommand command)
     {
         return await _mediator.Send(command);
+    }
+
+    [HttpGet]
+    public async Task<List<ProductModel>> Pull()
+    {
+        return await _mediator.Send(new ProductQueryRequest());
     }
 }

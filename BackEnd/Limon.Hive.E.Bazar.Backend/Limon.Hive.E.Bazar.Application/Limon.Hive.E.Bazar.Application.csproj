@@ -13,11 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Actions\Carts\Query\" />
-    <Folder Include="Actions\Products\Query\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Limon.Hive.E.Bazar.Domain\Limon.Hive.E.Bazar.Domain.csproj" />
   </ItemGroup>
 

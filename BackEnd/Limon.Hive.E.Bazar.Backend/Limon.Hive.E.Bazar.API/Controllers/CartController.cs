@@ -1,5 +1,6 @@
 ﻿using Limon.Hive.E.Bazar.Application.Actions.Carts;
 using Limon.Hive.E.Bazar.Application.Actions.Carts.Command;
+using Limon.Hive.E.Bazar.Application.Actions.Carts.Query;
 using Limon.Hive.E.Bazar.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -18,5 +19,11 @@ public class CartController(IMediator mediator) : Controller
     public async Task<LimonHiveActionResponse<CartModel>> Insert(CartCommand command)
     {
         return await _mediator.Send(command);
+    }
+
+    [HttpGet]
+    public async Task<List<CartModel>> Pull()
+    {
+        return await _mediator.Send(new CartQueryRequest());
     }
 }

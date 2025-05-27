@@ -27,6 +27,7 @@ public class CartModel : BaseModel
         {
             return entity => new CartModel
             {
+                Id = entity.Id,
                 CustomerId = entity.CustomerId,
                 ProductId = entity.ProductId,
                 CreatedDate = entity.CreatedDate,
