@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Actions\" />
+    <Folder Include="Actions\Products\Query\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,4 @@
-﻿using Limon.Hive.E.Bazar.Domain.Entities;
-
-namespace Limon.Hive.E.Bazar.Application;
+﻿namespace Limon.Hive.E.Bazar.Application;
 
 public interface ILimonHiveDbContext
 {

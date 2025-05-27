@@ -23,12 +23,6 @@
  
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
- 
-
-  <ItemGroup>
     <ProjectReference Include="..\Limon.Hive.E.Bazar.Infrastractures\Limon.Hive.E.Bazar.Infrastractures.csproj" />
   </ItemGroup>
 

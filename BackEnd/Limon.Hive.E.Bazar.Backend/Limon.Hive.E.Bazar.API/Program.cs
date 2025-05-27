@@ -1,10 +1,13 @@
 using Limon.Hive.E.Bazar.Application;
+using Limon.Hive.E.Bazar.Application.Actions.Products.Command;
 using Limon.Hive.E.Bazar.Infrastractures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -28,7 +31,7 @@ builder.Services.AddDbContext<LimonHiveDbContext>(o =>
 
 builder.Services.AddScoped<ILimonHiveDbContext, LimonHiveDbContext>();
 
-//builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(AppoinmentCreateHandler).GetTypeInfo().Assembly));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(ProductHandler).GetTypeInfo().Assembly));
 //builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(DoctorQueryHandler).GetTypeInfo().Assembly));
 var app = builder.Build();
 
@@ -41,7 +44,6 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging() || app.Enviro
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
-app.UseAuthorization();
 app.MapControllers();
 app.Run();
 
