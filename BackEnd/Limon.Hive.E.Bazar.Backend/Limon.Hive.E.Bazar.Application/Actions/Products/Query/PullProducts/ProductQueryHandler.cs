@@ -1,4 +1,4 @@
-﻿namespace Limon.Hive.E.Bazar.Application.Actions.Products.Query;
+﻿namespace Limon.Hive.E.Bazar.Application.Actions.Products.Query.PullProducts;
 
 public class ProductQueryHandler(ILimonHiveDbContext context) : IRequestHandler<ProductQueryRequest, List<ProductModel>>
 {

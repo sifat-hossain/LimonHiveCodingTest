@@ -1,6 +1,7 @@
 ﻿using Limon.Hive.E.Bazar.Application.Actions.Products;
 using Limon.Hive.E.Bazar.Application.Actions.Products.Command;
-using Limon.Hive.E.Bazar.Application.Actions.Products.Query;
+using Limon.Hive.E.Bazar.Application.Actions.Products.Query.PullProductById;
+using Limon.Hive.E.Bazar.Application.Actions.Products.Query.PullProducts;
 using Limon.Hive.E.Bazar.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -25,5 +26,14 @@ public class ProductController(IMediator mediator) : Controller
     public async Task<List<ProductModel>> Pull()
     {
         return await _mediator.Send(new ProductQueryRequest());
+    }
+
+    [HttpGet("{productId}")]
+    public async Task<ProductModel> GetProductById(Guid productId)
+    {
+        return await _mediator.Send(new PullProductByIdQueryRequest()
+        {
+            ProductId = productId
+        });
     }
 }
