@@ -1,0 +1,172 @@
+﻿@page
+@model Limon.Hive.Frontend.Pages.Products.ProductModel
+@{
+    ViewData["Title"] = "E-Bazaar";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary">E-Bazaar</h2>
+        <button class="btn btn-outline-secondary position-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas">
+            🛒 Cart
+            @if (Model.CartItems?.Count > 0)
+            {
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    @Model.CartItems.Count
+                </span>
+            }
+        </button>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="bg-primary text-white p-3 rounded text-center">
+                <h5>Total Product:20 @* @Model.TotalProduct *@</h5>
+                <p>Warehouse has total of 20 @* @Model.TotalProduct *@ products today</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="bg-primary text-white p-3 rounded text-center">
+                <h5>Total Vendor:10 @* @Model.TotalVendor *@</h5>
+                <p>@* @Model.TotalVendor *@10 out of 10 vendors are available</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="bg-primary text-white p-3 rounded text-center">
+                <h5>Unique Product:15 @* @Model.UniqueProduct *@</h5>
+                <p>Non-duplicate or redundant products</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <input type="text" class="form-control w-50" placeholder="Search products..." />
+        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+            Add Product
+        </button>
+    </div>
+
+    <p>Showing 1-@Model.Products.Count of 10 @* @Model.TotalProduct *@ results</p>
+
+
+    <!-- Product List -->
+    <div class="row">
+        @foreach (var product in Model.Products)
+        {
+            var inCart = Model.CartItems?.FirstOrDefault(c => c.ProductId == product.Id);
+            var isDiscounted = product.DiscountStartDate <= DateTime.Now && DateTime.Now <= product.DiscountEndDate;
+            var finalPrice = isDiscounted ? product.Price * 0.9m : product.Price;
+
+            <div class="col-md-3 mb-4">
+                <div class="border p-3 rounded shadow text-center">
+                    <img src="@product.ImageUrl" alt="@product.Name" class="img-fluid mb-2" style="max-height: 150px; object-fit: contain;" />
+                    <h6>@product.Name</h6>
+                    <p>
+                        @if (isDiscounted)
+                        {
+                            <span class="fw-bold text-danger">$@finalPrice</span>
+                            <span class="text-muted text-decoration-line-through ms-2">$@product.Price</span>
+                        }
+                        else
+                        {
+                            <span class="fw-bold">$@product.Price</span>
+                        }
+                    </p>
+
+                    @if (inCart != null)
+                    {
+                        <div class="bg-light text-primary rounded py-1 px-2">In Cart: 1</div>
+                    }
+                    else
+                    {
+                        <form method="post" asp-page-handler="AddToCart">
+                            <input type="hidden" name="productId" value="@product.Id" />
+                            <button class="mt-2 btn btn-sm btn-primary" type="submit">Add to Cart</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+            <li class="page-item active"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">5</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+    </nav>
+</div>
+<!-- -->
+
+
+<!-- Add Product -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="AddProduct">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addProductModalLabel">Add Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label asp-for="NewProduct.Name" class="form-label"></label>
+                        <input asp-for="NewProduct.Name" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="NewProduct.ImageUrl" class="form-label"></label>
+                        <input asp-for="NewProduct.ImageUrl" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="NewProduct.Price" class="form-label"></label>
+                        <input asp-for="NewProduct.Price" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="NewProduct.DiscountStartDate" class="form-label"></label>
+                        <input asp-for="NewProduct.DiscountStartDate" type="datetime-local" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="NewProduct.DiscountEndDate" class="form-label"></label>
+                        <input asp-for="NewProduct.DiscountEndDate" type="datetime-local" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Cart -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="cartOffcanvasLabel">Your Cart</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        @if (Model.CartItems?.Any() == true)
+        {
+            <ul class="list-group mb-3">
+                @foreach (var item in Model.CartItems)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        @item.Product.Name
+                        <span>$@item.FinalPrice</span>
+                    </li>
+                }
+            </ul>
+            <form method="post" asp-page-handler="ConfirmOrder">
+                <button type="submit" class="btn btn-success w-100">✅ Confirm Order</button>
+            </form>
+        }
+        else
+        {
+            <p>Your cart is empty.</p>
+        }
+    </div>
+</div>
