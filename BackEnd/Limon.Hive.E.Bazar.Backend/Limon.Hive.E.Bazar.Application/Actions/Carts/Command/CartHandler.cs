@@ -24,6 +24,7 @@ public class CartHandler(ILimonHiveDbContext context) : IRequestHandler<CartComm
 
             cart.CustomerId = command.CustomerId;
             cart.ProductId = command.ProductId;
+            cart.ProductQuantity = command.ProductQuantity;
             cart.CreatedDate = command.CreatedDate;
             cart.FinalPrice = command.FinalPrice;
             cart.IsDeleted = command.IsDeleted;

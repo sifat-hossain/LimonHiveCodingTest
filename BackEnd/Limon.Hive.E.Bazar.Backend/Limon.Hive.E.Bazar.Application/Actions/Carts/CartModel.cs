@@ -6,6 +6,7 @@ public class CartModel : BaseModel
 {
     public Guid ProductId { get; set; }
     public decimal FinalPrice { get; set; }
+    public int ProductQuantity { get; set; }
     public DateTime CreatedDate { get; set; }
     public Guid CustomerId { get; set; }
 
@@ -15,6 +16,7 @@ public class CartModel : BaseModel
         {
             CustomerId = command.CustomerId,
             ProductId = command.ProductId,
+            ProductQuantity = command.ProductQuantity,
             CreatedDate = command.CreatedDate,
             FinalPrice = command.FinalPrice,
             IsDeleted = command.IsDeleted,
@@ -30,6 +32,7 @@ public class CartModel : BaseModel
                 Id = entity.Id,
                 CustomerId = entity.CustomerId,
                 ProductId = entity.ProductId,
+                ProductQuantity = entity.ProductQuantity,
                 CreatedDate = entity.CreatedDate,
                 FinalPrice = entity.FinalPrice,
                 IsDeleted = entity.IsDeleted,

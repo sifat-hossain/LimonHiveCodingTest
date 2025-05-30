@@ -5,6 +5,7 @@ public class ProductModel : BaseModel
     public string Name { get; set; }
     public string ImageUrl { get; set; }
     public decimal Price { get; set; }
+    public int Quantity { get; set; }
     public DateTime DiscountStartDate { get; set; }
     public DateTime DiscountEndDate { get; set; }
 
@@ -15,6 +16,7 @@ public class ProductModel : BaseModel
             Name = command.Name,
             ImageUrl = command.ImageUrl,
             Price = command.Price,
+            Quantity = command.Quantity,
             DiscountStartDate = command.DiscountStartDate,
             DiscountEndDate = command.DiscountEndDate
         };
@@ -30,6 +32,7 @@ public class ProductModel : BaseModel
                 Name = entity.Name,
                 ImageUrl = entity.ImageUrl,
                 Price = entity.Price,
+                Quantity = entity.Quantity,
                 DiscountStartDate = entity.DiscountStartDate,
                 DiscountEndDate = entity.DiscountEndDate,
                 IsDeleted = entity.IsDeleted

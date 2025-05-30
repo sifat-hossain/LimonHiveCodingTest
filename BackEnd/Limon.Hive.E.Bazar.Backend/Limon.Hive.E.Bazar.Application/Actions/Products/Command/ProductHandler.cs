@@ -26,6 +26,7 @@ public class ProductHandler(ILimonHiveDbContext context) : IRequestHandler<Produ
             product.Name = command.Name;
             product.ImageUrl = command.ImageUrl;
             product.Price = command.Price;
+            product.Quantity = command.Quantity;
             product.DiscountStartDate = command.DiscountStartDate;
             product.DiscountEndDate = command.DiscountEndDate;
             product.IsDeleted = command.IsDeleted;
