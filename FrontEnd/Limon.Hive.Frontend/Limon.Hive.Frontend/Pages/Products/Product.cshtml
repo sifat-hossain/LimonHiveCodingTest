@@ -51,41 +51,47 @@
 
     <!-- Product List -->
     <div class="row">
-        @foreach (var product in Model.Products)
+        @if (Model.Products.Count <= 0)
         {
-            var inCart = Model.CartItems?.FirstOrDefault(c => c.ProductId == product.Id);
-            var isDiscounted = product.DiscountStartDate <= DateTime.Now && DateTime.Now <= product.DiscountEndDate;
-            var finalPrice = isDiscounted ? product.Price * 0.9m : product.Price;
+            <p>No product available right now</p>
+        }
+        else
+        {
+            @foreach (var product in Model.Products)
+            {
+                var inCart = Model.CartItems?.FirstOrDefault(c => c.ProductId == product.Id);
+                var isDiscounted = product.DiscountStartDate <= DateTime.Now && DateTime.Now <= product.DiscountEndDate;
+                var finalPrice = isDiscounted ? product.Price - (product.Price * 0.25m) : product.Price;
 
-            <div class="col-md-3 mb-4">
-                <div class="border p-3 rounded shadow text-center">
-                    <img src="@product.ImageUrl" alt="@product.Name" class="img-fluid mb-2" style="max-height: 150px; object-fit: contain;" />
-                    <h6>@product.Name</h6>
-                    <p>
-                        @if (isDiscounted)
-                        {
-                            <span class="fw-bold text-danger">$@finalPrice</span>
-                            <span class="text-muted text-decoration-line-through ms-2">$@product.Price</span>
-                        }
-                        else
-                        {
-                            <span class="fw-bold">$@product.Price</span>
-                        }
-                    </p>
-
-                    @if (inCart != null)
-                    {
-                        <div class="bg-light text-primary rounded py-1 px-2">In Cart: 1</div>
-                    }
-                    else
-                    {
+                <div class="col-md-3 mb-4">
+                    <div class="border p-3 rounded shadow text-center">
+                        <img src="@product.ImageUrl" alt="@product.Name" class="img-fluid mb-2" style="max-height: 150px; object-fit: contain;" />
+                        <h6>@product.Name</h6>
+                        <p>
+                            @if (isDiscounted)
+                            {
+                                <span class="fw-bold text-danger">$@finalPrice</span>
+                                <span class="text-muted text-decoration-line-through ms-2">$@product.Price</span>
+                            }
+                            else
+                            {
+                                <span class="fw-bold">$@product.Price</span>
+                            }
+                        </p>
                         <form method="post" asp-page-handler="AddToCart">
                             <input type="hidden" name="productId" value="@product.Id" />
+                            <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                                <button type="button" class="btn btn-outline-secondary px-3" onclick="adjustQty(this, -1)">−</button>
+
+                                <input type="number" name="quantity" class="form-control text-center" value="1" min="1" readonly />
+
+                                <button type="button" class="btn btn-outline-secondary px-3" onclick="adjustQty(this, 1)">+</button>
+                            </div>
                             <button class="mt-2 btn btn-sm btn-primary" type="submit">Add to Cart</button>
                         </form>
-                    }
+                    </div>
                 </div>
-            </div>
+            }
         }
     </div>
 
@@ -100,13 +106,11 @@
     </nav>
 </div>
 <!-- -->
-
-
 <!-- Add Product -->
 <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" asp-page-handler="AddProduct">
+            <form method="post" asp-page-handler="AddProduct" enctype="multipart/form-data">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addProductModalLabel">Add Product</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -117,8 +121,8 @@
                         <input asp-for="NewProduct.Name" class="form-control" />
                     </div>
                     <div class="mb-3">
-                        <label asp-for="NewProduct.ImageUrl" class="form-label"></label>
-                        <input asp-for="NewProduct.ImageUrl" class="form-control" />
+                        <label asp-for="NewProduct.ImageUrl" class="form-label"> Upload Image</label>
+                        <input type="file" name="ImageFile" class="form-control" />
                     </div>
                     <div class="mb-3">
                         <label asp-for="NewProduct.Price" class="form-label"></label>
@@ -170,3 +174,15 @@
         }
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function adjustQty(button, delta) {
+            const input = button.closest("form").querySelector("input[name='quantity']");
+            let current = parseInt(input.value);
+            current = isNaN(current) ? 1 : current + delta;
+            if (current < 1) current = 1;
+            input.value = current;
+        }
+    </script>
+}

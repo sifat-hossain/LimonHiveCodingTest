@@ -12,9 +12,11 @@ public class ProductModel : PageModel
     public List<Product> Products { get; set; }
     public List<Cart>? CartItems { get; set; }
 
-    public ProductModel(IHttpClientFactory clientFactory)
+    private readonly IWebHostEnvironment _env;
+    public ProductModel(IHttpClientFactory clientFactory, IWebHostEnvironment env)
     {
         _clientFactory = clientFactory;
+        _env = env;
     }
 
     public async Task OnGetAsync()
@@ -38,10 +40,25 @@ public class ProductModel : PageModel
     [BindProperty]
     public Product NewProduct { get; set; }
 
+    [BindProperty]
+    public IFormFile ImageFile { get; set; }
     public async Task<IActionResult> OnPostAddProductAsync()
     {
         NewProduct.Id = Guid.NewGuid();
         NewProduct.IsDeleted = false;
+
+        if (ImageFile != null)
+        {
+            var fileName = NewProduct.Id.ToString() + Path.GetExtension(ImageFile.FileName);
+            var filePath = Path.Combine(_env.WebRootPath, "ProductImage", fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await ImageFile.CopyToAsync(stream);
+            }
+
+            NewProduct.ImageUrl = "/ProductImage/" + fileName;
+        }
 
         var client = _clientFactory.CreateClient();
         var response = await client.PostAsJsonAsync("https://localhost:7183/api/Product", NewProduct);
@@ -64,7 +81,7 @@ public class ProductModel : PageModel
         return RedirectToPage();
     }
 
-    public async Task<IActionResult> OnPostAddToCartAsync(Guid productId)
+    public async Task<IActionResult> OnPostAddToCartAsync(Guid productId, int quantity)
     {
         var client = _clientFactory.CreateClient();
         var response = await client.GetFromJsonAsync<Product>($"https://localhost:7183/api/Product/{productId}");
@@ -83,7 +100,8 @@ public class ProductModel : PageModel
                     Id = Guid.NewGuid(),
                     ProductId = productId,
                     Product = response,
-                    FinalPrice = IsDiscounted(response) ? response.Price * 0.9m : response.Price,
+                    ProductQuantity = quantity,
+                    FinalPrice = IsDiscounted(response) ? response.Price - (response.Price * 0.25M) : response.Price,
                     CreatedDate = DateTime.UtcNow,
                     CustomerId = Guid.NewGuid()
                 });
