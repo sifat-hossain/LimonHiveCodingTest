@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "{PageNumber:int?}"
 @model Limon.Hive.Frontend.Pages.Products.ProductModel
 @{
     ViewData["Title"] = "E-Bazaar";
@@ -21,26 +21,29 @@
     <div class="row mb-4">
         <div class="col-md-4">
             <div class="bg-primary text-white p-3 rounded text-center">
-                <h5>Total Product:20 @* @Model.TotalProduct *@</h5>
-                <p>Warehouse has total of 20 @* @Model.TotalProduct *@ products today</p>
+                <h5>Total Product: @Model.TotalProductQuatity</h5>
+                <p>Warehouse has total of @Model.TotalProductQuatity today</p>
             </div>
         </div>
         <div class="col-md-4">
             <div class="bg-primary text-white p-3 rounded text-center">
-                <h5>Total Vendor:10 @* @Model.TotalVendor *@</h5>
-                <p>@* @Model.TotalVendor *@10 out of 10 vendors are available</p>
+                <h5>Total Vendor: 10</h5>
+                <p>10 out of 10 vendors are available</p>
             </div>
         </div>
         <div class="col-md-4">
             <div class="bg-primary text-white p-3 rounded text-center">
-                <h5>Unique Product:15 @* @Model.UniqueProduct *@</h5>
-                <p>Non-duplicate or redundant products</p>
+                <h5>Unique Product: @Model.TotalProduct</h5>
+                <p>There are @Model.TotalProduct types of Products Available</p>
             </div>
         </div>
     </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <input type="text" class="form-control w-50" placeholder="Search products..." />
+    <div class="d-flex justify-content-between align-items-center mb-1">
+       <form method="get" class="d-flex w-50 me-2">
+        <input type="text" name="SearchQuery" value="@Model.SearchQuery" class="form-control me-2" placeholder="Search products..." />
+        <button type="submit" class="btn btn-outline-primary">Search</button>
+       </form>
         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
             Add Product
         </button>
@@ -95,17 +98,56 @@
         }
     </div>
 
-    <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center">
-            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-            <li class="page-item active"><a class="page-link" href="#">3</a></li>
-            <li class="page-item"><a class="page-link" href="#">4</a></li>
-            <li class="page-item"><a class="page-link" href="#">5</a></li>
-            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-        </ul>
-    </nav>
+   @{
+       int totalPages = (int)Math.Ceiling((double)Model.TotalProduct / Model.PageSize);
+   }
+
+<!-- Pagination-->
+<div class="row">
+    <div class="d-flex justify-content-between align-items-center">
+       
+        <!-- Pagination -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination mb-0">
+                <li class="page-item @(Model.PageNumber <= 1 ? "disabled" : "")">
+                    <a class="page-link" asp-page="/Products/Product"
+                       asp-route-PageNumber="@(Model.PageNumber - 1)"
+                       asp-route-PageSize="@Model.PageSize">Prev</a>
+                </li>
+
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link" asp-page="/Products/Product"
+                           asp-route-PageNumber="@i"
+                           asp-route-PageSize="@Model.PageSize">@i</a>
+                    </li>
+                }
+
+                <li class="page-item @(Model.PageNumber >= totalPages ? "disabled" : "")">
+                    <a class="page-link" asp-page="/Products/Product"
+                       asp-route-PageNumber="@(Model.PageNumber + 1)"
+                       asp-route-PageSize="@Model.PageSize">Next</a>
+                </li>
+            </ul>
+        </nav>
+
+         <!-- Page Size Dropdown -->
+        <form method="get" class="d-flex align-items-center">
+            <label for="PageSize" class="me-2 mb-0">Items per page:</label>
+            <select name="PageSize" id="PageSize" onchange="this.form.submit()" class="form-select w-auto me-3">
+                <option value="5" selected="@(Model.PageSize == 5 ? "selected" : null)">5</option>
+                <option value="10" selected="@(Model.PageSize == 10 ? "selected" : null)">10</option>
+                <option value="25" selected="@(Model.PageSize == 25 ? "selected" : null)">25</option>
+                <option value="50" selected="@(Model.PageSize == 50 ? "selected" : null)">50</option>
+            </select>
+            <input type="hidden" name="PageNumber" value="@Model.PageNumber" />
+        </form>
+    </div>
 </div>
-<!-- -->
+</div>
+
+
 <!-- Add Product -->
 <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -119,6 +161,10 @@
                     <div class="mb-3">
                         <label asp-for="NewProduct.Name" class="form-label"></label>
                         <input asp-for="NewProduct.Name" class="form-control" />
+                    </div>
+                     <div class="mb-3">
+                        <label asp-for="NewProduct.Quantity" class="form-label"></label>
+                        <input type="number" asp-for="NewProduct.Quantity" class="form-control" />
                     </div>
                     <div class="mb-3">
                         <label asp-for="NewProduct.ImageUrl" class="form-label"> Upload Image</label>
@@ -155,18 +201,32 @@
     <div class="offcanvas-body">
         @if (Model.CartItems?.Any() == true)
         {
-            <ul class="list-group mb-3">
-                @foreach (var item in Model.CartItems)
-                {
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        @item.Product.Name
-                        <span>$@item.FinalPrice</span>
-                    </li>
-                }
-            </ul>
-            <form method="post" asp-page-handler="ConfirmOrder">
-                <button type="submit" class="btn btn-success w-100">✅ Confirm Order</button>
-            </form>
+            <div class="list-group">
+        @foreach (var item in Model.CartItems)
+        {
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <img src="@item.Product.ImageUrl" alt="@item.Product.Name" width="60" height="60" class="rounded" />
+                    <div>
+                        <h6 class="mb-1">@item.Product.Name</h6>
+                        <small class="text-muted">Qty: @item.ProductQuantity</small>
+                    </div>
+                </div>
+
+                <div class="text-end">
+                    <div class="fw-semibold">$@(item.FinalPrice.ToString("0.00"))</div>
+                    <form method="post" asp-page-handler="RemoveFromCart" class="mt-1">
+                        <input type="hidden" name="productId" value="@item.ProductId" />
+                        <button class="btn btn-sm btn-outline-danger">Remove</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+
+    <form method="post" asp-page-handler="PlaceOrder">
+        <button type="submit" class="btn btn-primary">Place Order</button>
+    </form>
         }
         else
         {
@@ -174,6 +234,7 @@
         }
     </div>
 </div>
+
 
 @section Scripts {
     <script>

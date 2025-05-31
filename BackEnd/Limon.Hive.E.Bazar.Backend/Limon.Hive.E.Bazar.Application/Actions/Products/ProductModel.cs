@@ -6,13 +6,14 @@ public class ProductModel : BaseModel
     public string ImageUrl { get; set; }
     public decimal Price { get; set; }
     public int Quantity { get; set; }
-    public DateTime DiscountStartDate { get; set; }
-    public DateTime DiscountEndDate { get; set; }
+    public DateTime? DiscountStartDate { get; set; }
+    public DateTime? DiscountEndDate { get; set; }
 
     public static ProductModel CreateFromCommand(ProductCommand command)
     {
         return new ProductModel
         {
+            Id = command.Id,
             Name = command.Name,
             ImageUrl = command.ImageUrl,
             Price = command.Price,

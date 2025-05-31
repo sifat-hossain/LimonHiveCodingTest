@@ -8,34 +8,34 @@ public class CartHandler(ILimonHiveDbContext context) : IRequestHandler<CartComm
     {
         try
         {
-            Cart? cart = await _context.Cart
-                .Where(x => !x.IsDeleted && x.Id == command.Id)
-                .FirstOrDefaultAsync(cancellationToken: cancellationToken);
-
-            if (cart == null)
+            foreach (var item in command.CartCreateCommands)
             {
-                cart = new Cart
+                Cart? cart = await _context.Cart
+                    .Where(x => !x.IsDeleted && x.Id == item.Id)
+                    .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+
+                if (cart == null)
                 {
-                    Id = command.Id
-                };
+                    cart = new Cart
+                    {
+                        Id = item.Id
+                    };
 
-                await _context.Cart.AddAsync(cart, cancellationToken);
+                    await _context.Cart.AddRangeAsync(cart);
+                }
+
+                cart.CustomerId = item.CustomerId;
+                cart.ProductId = item.ProductId;
+                cart.ProductQuantity = item.ProductQuantity;
+                cart.CreatedDate = item.CreatedDate;
+                cart.FinalPrice = item.FinalPrice;
             }
-
-            cart.CustomerId = command.CustomerId;
-            cart.ProductId = command.ProductId;
-            cart.ProductQuantity = command.ProductQuantity;
-            cart.CreatedDate = command.CreatedDate;
-            cart.FinalPrice = command.FinalPrice;
-            cart.IsDeleted = command.IsDeleted;
-
             await _context.SaveChangesAsync(cancellationToken);
 
             return new LimonHiveActionResponse<CartModel>
             {
                 IsSuccessful = true,
-                Message = null,
-                Model = CartModel.CreateFromCommand(command)
+                Message = null
             };
 
         }

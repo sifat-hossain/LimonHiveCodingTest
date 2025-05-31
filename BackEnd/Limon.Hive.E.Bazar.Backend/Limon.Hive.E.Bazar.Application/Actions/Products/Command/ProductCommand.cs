@@ -1,7 +1,8 @@
 ﻿namespace Limon.Hive.E.Bazar.Application.Actions.Products.Command;
 
-public class ProductCommand : BaseEntity, IRequest<LimonHiveActionResponse<ProductModel>>
+public class ProductCommand : IRequest<LimonHiveActionResponse<ProductModel>>
 {
+    public Guid Id { get; set; }
     public string Name { get; set; }
     public string ImageUrl { get; set; }
     public decimal Price { get; set; }

@@ -29,7 +29,6 @@ public class ProductHandler(ILimonHiveDbContext context) : IRequestHandler<Produ
             product.Quantity = command.Quantity;
             product.DiscountStartDate = command.DiscountStartDate;
             product.DiscountEndDate = command.DiscountEndDate;
-            product.IsDeleted = command.IsDeleted;
 
             await _context.SaveChangesAsync(cancellationToken);
 

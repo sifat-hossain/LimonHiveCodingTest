@@ -1,6 +1,4 @@
-﻿using Limon.Hive.E.Bazar.Application.Actions.Carts.Command;
-
-namespace Limon.Hive.E.Bazar.Application.Actions.Carts;
+﻿namespace Limon.Hive.E.Bazar.Application.Actions.Carts;
 
 public class CartModel : BaseModel
 {
@@ -9,19 +7,6 @@ public class CartModel : BaseModel
     public int ProductQuantity { get; set; }
     public DateTime CreatedDate { get; set; }
     public Guid CustomerId { get; set; }
-
-    public static CartModel CreateFromCommand(CartCommand command)
-    {
-        return new CartModel
-        {
-            CustomerId = command.CustomerId,
-            ProductId = command.ProductId,
-            ProductQuantity = command.ProductQuantity,
-            CreatedDate = command.CreatedDate,
-            FinalPrice = command.FinalPrice,
-            IsDeleted = command.IsDeleted,
-        };
-    }
 
     public static Expression<Func<Cart, CartModel>> Projection
     {

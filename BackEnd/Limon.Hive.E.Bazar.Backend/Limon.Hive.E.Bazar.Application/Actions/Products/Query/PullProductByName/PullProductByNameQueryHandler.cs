@@ -1,17 +1,13 @@
-﻿namespace Limon.Hive.E.Bazar.Application.Actions.Products.Query.PullProducts;
+﻿namespace Limon.Hive.E.Bazar.Application.Actions.Products.Query.PullProductByName;
 
-public class ProductQueryHandler(ILimonHiveDbContext context) : IRequestHandler<ProductQueryRequest, ProductResponse>
+public class PullProductByNameQueryHandler(ILimonHiveDbContext context) :
+    IRequestHandler<PullProductByNameQueryRequest, ProductResponse>
 {
     private readonly ILimonHiveDbContext _context = context;
-    public async Task<ProductResponse> Handle(ProductQueryRequest request, CancellationToken cancellationToken)
+    public async Task<ProductResponse> Handle(PullProductByNameQueryRequest request, CancellationToken cancellationToken)
     {
-        int skip = request.Skip ?? 0;
-        int take = (int)((request.Take == null || request.Take <= 0) ? 10 : request.Take);
-
         List<Product> products = await _context.Product
-            .Where(x => !x.IsDeleted)
-            .Skip(skip)
-            .Take(take)
+            .Where(x => !x.IsDeleted && x.Name.Contains(request.ProductName))
             .ToListAsync(cancellationToken: cancellationToken);
 
         var totalProductCount = await _context.Product.CountAsync(cancellationToken: cancellationToken);
