@@ -29,7 +29,7 @@ public class ProductHandler(ILimonHiveDbContext context) : IRequestHandler<Produ
             product.Quantity = command.Quantity;
             product.DiscountStartDate = command.DiscountStartDate;
             product.DiscountEndDate = command.DiscountEndDate;
-
+            product.Slug = command.Slug;
             await _context.SaveChangesAsync(cancellationToken);
 
             return new LimonHiveActionResponse<ProductModel>
