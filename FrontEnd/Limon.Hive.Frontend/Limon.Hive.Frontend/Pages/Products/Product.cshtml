@@ -221,32 +221,39 @@
     <div class="offcanvas-body">
         @if (Model.CartItems?.Any() == true)
         {
-            <div class="list-group">
-        @foreach (var item in Model.CartItems)
-        {
-            <div class="list-group-item d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center gap-3">
-                    <img src="@item.Product.ImageUrl" alt="@item.Product.Name" width="60" height="60" class="rounded" />
-                    <div>
-                        <h6 class="mb-1">@item.Product.Name</h6>
-                        <small class="text-muted">Qty: @item.ProductQuantity</small>
+        decimal subtotal = 0;
+
+        <div class="list-group mb-3">
+            @foreach (var item in Model.CartItems)
+            {
+                var total = item.FinalPrice * item.ProductQuantity;
+                subtotal += total;
+
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-3">
+                        <img src="@item.Product.ImageUrl" alt="@item.Product.Name" width="60" height="60" class="rounded" />
+                        <div>
+                            <h6 class="mb-1">@item.Product.Name</h6>
+                            <small class="text-muted">Qty: @item.ProductQuantity</small>
+                        </div>
+                    </div>
+
+                    <div class="text-end">
+                        <div class="fw-semibold">$@total.ToString("0.00")</div>
+                        <form method="post" asp-page-handler="RemoveFromCart" class="mt-1">
+                            <input type="hidden" name="productId" value="@item.ProductId" />
+                            <button class="btn btn-sm btn-outline-danger">Remove</button>
+                        </form>
                     </div>
                 </div>
-
-                <div class="text-end">
-                    <div class="fw-semibold">$@(item.FinalPrice.ToString("0.00"))</div>
-                    <form method="post" asp-page-handler="RemoveFromCart" class="mt-1">
-                        <input type="hidden" name="productId" value="@item.ProductId" />
-                        <button class="btn btn-sm btn-outline-danger">Remove</button>
-                    </form>
-                </div>
+            }
+        </div>
+            <div class="border-top pt-3">
+                <h6 class="fw-bold">Subtotal: $@subtotal.ToString("0.00")</h6>
             </div>
-        }
-    </div>
-
-    <form method="post" asp-page-handler="PlaceOrder">
-        <button type="submit" class="btn btn-primary">Place Order</button>
-    </form>
+        <form method="post" asp-page-handler="PlaceOrder">
+            <button type="submit" class="btn btn-primary">Place Order</button>
+            </form>
         }
         else
         {

@@ -164,9 +164,9 @@ public class ProductModel : PageModel
             {
                 Id = Guid.NewGuid(),
                 ProductId = item.Product.Id,
-                FinalPrice = item.FinalPrice,
+                FinalPrice = item.FinalPrice * item.ProductQuantity,
                 ProductQuantity = item.ProductQuantity,
-                CreatedDate = DateTime.UtcNow,
+                CreatedDate = DateTime.Now,
                 CustomerId = Guid.Parse("b1604360-b2f6-4635-8afd-f262ba07a246")
             }).ToList()
         };
